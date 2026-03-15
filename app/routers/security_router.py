@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
@@ -16,7 +16,12 @@ def get_db():
 
 
 @router.post("/block-ip")
-def block_ip(ip_address: str, reason: str, db: Session = Depends(get_db)):
+def block_ip(
+    ip_address: str,
+    reason: str,
+    db: Session = Depends(get_db),
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
 
     existing = db.query(BlockedIP).filter(BlockedIP.ip_address == ip_address).first()
 
@@ -34,14 +39,21 @@ def block_ip(ip_address: str, reason: str, db: Session = Depends(get_db)):
     return {"message": "IP blocked successfully"}
 
 @router.get("/blocked-ips")
-def get_blocked_ips(db: Session = Depends(get_db)):
+def get_blocked_ips(
+    db: Session = Depends(get_db),
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
 
     ips = db.query(BlockedIP).all()
 
     return ips
 
 @router.delete("/unblock-ip/{ip_id}")
-def unblock_ip(ip_id: int, db: Session = Depends(get_db)):
+def unblock_ip(
+    ip_id: int,
+    db: Session = Depends(get_db),
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
 
     ip = db.query(BlockedIP).filter(BlockedIP.id == ip_id).first()
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta,timezone
+from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from app.models.rate_limit import RateLimit
 
@@ -15,7 +15,8 @@ def check_rate_limit(db: Session, api_key: str):
     if not key_obj:
         return False  
 
-    now = datetime.now(timezone.utc)
+    # Use naive UTC time to match stored datetimes
+    now = datetime.utcnow()
     rate = db.query(RateLimit).filter(RateLimit.api_key == api_key).first()
 
     if not rate:

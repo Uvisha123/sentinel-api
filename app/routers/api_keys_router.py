@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.api_key import APIKey
-from app.schemas.api_key_schema import APIKeyCreate, APIKeyOut
+from app.schemas.api_key_schema import APIKeyCreate,APIKeyRead
 from app.services.security_engine import generate_api_key
 
 router = APIRouter(prefix="/api-keys", tags=["API Keys"])
@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 
-@router.post("/", response_model=APIKeyOut)
+@router.post("/", response_model=APIKeyRead)
 def create_api_key(data: APIKeyCreate, db: Session = Depends(get_db)):
     new_key = APIKey(
         key=generate_api_key(),
@@ -33,14 +33,21 @@ def create_api_key(data: APIKeyCreate, db: Session = Depends(get_db)):
     return new_key
 
 
-@router.get("/", response_model=list[APIKeyOut])
-def list_api_keys(db: Session = Depends(get_db)):
+@router.get("/", response_model=list[APIKeyRead])
+def list_api_keys(
+    db: Session = Depends(get_db),
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
     keys = db.query(APIKey).all()
     return keys
 
 
 @router.delete("/{key_id}")
-def delete_api_key(key_id: int, db: Session = Depends(get_db)):
+def delete_api_key(
+    key_id: int,
+    db: Session = Depends(get_db),
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
     key = db.query(APIKey).filter(APIKey.id == key_id).first()
 
     if not key:

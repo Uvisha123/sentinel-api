@@ -18,11 +18,22 @@ def get_top_endpoints(db: Session, limit: int = 5):
     return [{"endpoint": r.endpoint, "request_count": r.request_count} for r in result]
 
 def get_suspicious_keys(db: Session):
-    result = db.query(
-        APIKey.key,
-        func.count(RequestLog.id).label("request_count")
-    ).join(RequestLog, APIKey.key == RequestLog.api_key)\
-     .group_by(APIKey.key)\
-     .having(func.count(RequestLog.id) > APIKey.usage_limit)\
-     .all()
-    return [{"api_key": r.key, "request_count": r.request_count} for r in result]
+    result = (
+        db.query(
+            APIKey.key,
+            APIKey.usage_limit,
+            func.count(RequestLog.id).label("request_count"),
+        )
+        .join(RequestLog, APIKey.key == RequestLog.api_key)
+        .group_by(APIKey.key, APIKey.usage_limit)
+        .having(func.count(RequestLog.id) > APIKey.usage_limit)
+        .all()
+    )
+    return [
+        {
+            "api_key": r.key,
+            "usage_limit": r.usage_limit,
+            "request_count": r.request_count,
+        }
+        for r in result
+    ]
