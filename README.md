@@ -2,6 +2,26 @@
 
 FastAPI-based security and analytics API with JWT auth, API keys, rate limiting, and anomaly detection.
 
+## Features
+
+- JWT authentication for users
+- API key generation and management
+- Rate limiting for abuse prevention
+- Request logging and basic analytics
+- Suspicious activity / anomaly detection
+- IP blocking for malicious clients
+
+## Tech Stack
+
+- FastAPI (backend framework)
+- Uvicorn (ASGI server)
+- PostgreSQL (relational database)
+- SQLAlchemy (ORM / DB layer)
+- Alembic (database migrations)
+- Pydantic v2 (data validation & settings)
+- Passlib (password hashing)
+- python-jose (JWT creation & verification)
+
 ## Requirements
 
 - Python 3.10+ (you are using 3.13)
@@ -63,6 +83,27 @@ alembic downgrade -1
 > to make initial development easy. In a production setup you would typically rely
 > on Alembic migrations only and remove that auto-create call.
 
+## Project Structure
+
+High-level layout of the project:
+
+```text
+api_fortress/
+│
+├── app/
+│   ├── main.py           # FastAPI application entrypoint
+│   ├── database.py       # DB engine & session setup
+│   ├── models/           # SQLAlchemy models (User, APIKey, RequestLog, etc.)
+│   ├── schemas/          # Pydantic schemas for request/response models
+│   ├── routers/          # Route modules (auth, api_keys, security, analytics)
+│   ├── services/         # Business logic (auth, security engine, rate limiter)
+│   └── middleware/       # Auth and rate limiting middleware
+│
+├── alembic/              # Alembic migration environment
+├── alembic.ini           # Alembic configuration
+└── README.md
+```
+
 ## Running the API
 
 ```bash
@@ -81,3 +122,6 @@ uvicorn app.main:app --reload --port 8001
    - `Authorization: Bearer <access_token>`
    - `X-API-Key: <api_key>`
 
+## License
+
+MIT License
