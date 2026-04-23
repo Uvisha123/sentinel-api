@@ -1,127 +1,264 @@
-# SentinelAPI (api_fortress)
+# 🚀 SentinelAPI – Secure API Monitoring & Protection Platform  
 
-FastAPI-based security and analytics API with JWT auth, API keys, rate limiting, and anomaly detection.
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![Status](https://img.shields.io/badge/Status-Active-success)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Features
+---
 
-- JWT authentication for users
-- API key generation and management
-- Rate limiting for abuse prevention
-- Request logging and basic analytics
-- Suspicious activity / anomaly detection
-- IP blocking for malicious clients
+## 🧠 Overview  
 
-## Tech Stack
+**SentinelAPI** is a backend system designed to **secure, monitor, and analyze API traffic** in modern applications.  
 
-- FastAPI (backend framework)
-- Uvicorn (ASGI server)
-- PostgreSQL (relational database)
-- SQLAlchemy (ORM / DB layer)
-- Alembic (database migrations)
-- Pydantic v2 (data validation & settings)
-- Passlib (password hashing)
-- python-jose (JWT creation & verification)
+It combines authentication, request tracking, and security mechanisms to protect APIs from abuse and provide real-time insights into usage patterns.  
 
-## Requirements
+👉 Goal: Build a **secure, scalable, and intelligent API protection system**
 
-- Python 3.10+ (you are using 3.13)
-- PostgreSQL running locally (default):
-  - host: `localhost`
-  - port: `5432`
-  - user: `postgres`
-  - password: `postgres`
-  - database: `api_fortress_db`
-- `virtualenv` or similar
+---
 
-You can override the DB connection with `DATABASE_URL`:
+## 🌍 Problem Statement  
 
-```bash
-export DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DBNAME"
+Modern APIs face critical challenges:  
+
+- Unauthorized access  
+- API abuse and request flooding  
+- Lack of monitoring and visibility  
+- Difficulty detecting suspicious behavior  
+
+### 💥 Real-World Impact  
+
+- Systems become vulnerable to attacks  
+- Increased server load and downtime  
+- No insights into API usage patterns  
+- Security risks in production systems  
+
+---
+
+## 🎯 Objectives  
+
+- Secure API access using authentication and API keys  
+- Monitor API traffic and user activity  
+- Detect suspicious and abnormal behavior  
+- Prevent abuse using rate limiting  
+- Provide analytics for better decision-making  
+
+---
+
+## 🏗️ System Architecture  
+
+```text
+        ┌──────────────────────────┐
+        │       CLIENT LAYER       │
+        │  Web | Mobile | Services │
+        └────────────┬─────────────┘
+                     │
+        ┌────────────▼─────────────┐
+        │   AUTHENTICATION LAYER   │
+        │   JWT | API Key System   │
+        └────────────┬─────────────┘
+                     │
+        ┌────────────▼─────────────┐
+        │    SECURITY ENGINE       │
+        │ Rate Limit | IP Block    │
+        │ Anomaly Detection        │
+        └────────────┬─────────────┘
+                     │
+        ┌────────────▼─────────────┐
+        │     ANALYTICS LAYER      │
+        │ Logs | Metrics | Insights│
+        └────────────┬─────────────┘
+                     │
+        ┌────────────▼─────────────┐
+        │       DATA LAYER         │
+        │ Users | Keys | Requests  │
+        └──────────────────────────┘
 ```
 
-## Setup
+---
+
+## 🔐 Core Features  
+
+- JWT-based user authentication  
+- API key generation and management  
+- Rate limiting for abuse prevention  
+- Request logging and analytics  
+- Suspicious activity detection  
+- IP blocking for malicious clients  
+
+---
+
+## 🧠 Security Engine  
+
+### ⚡ Rate Limiting  
+Prevents excessive requests and protects the system from abuse  
+
+### 🚫 IP Blocking  
+Blocks malicious or suspicious IP addresses  
+
+### 🔍 Anomaly Detection  
+Detects unusual patterns in API usage  
+
+---
+
+## 📊 Analytics System  
+
+- Tracks API request activity  
+- Identifies high-traffic endpoints  
+- Detects abnormal usage behavior  
+- Provides insights for system monitoring  
+
+---
+
+## 🔁 System Workflow  
+
+```text
+Client Request → Authentication → API Key Validation → Security Checks → Request Logging → Response → Analytics
+```
+
+---
+
+## ⚙️ Tech Stack  
+
+### Backend  
+- Python  
+- FastAPI  
+- Uvicorn  
+
+### Database  
+- PostgreSQL  
+- SQLAlchemy  
+- Alembic  
+
+### Security  
+- JWT (python-jose)  
+- Passlib (password hashing)  
+
+### Validation  
+- Pydantic  
+
+---
+
+## 🧪 Example API  
+
+### Register User  
+
+```http
+POST /auth/register
+```
+
+```json
+{
+  "username": "test",
+  "email": "test@email.com",
+  "password": "123456"
+}
+```
+
+---
+
+### Login  
+
+```http
+POST /auth/login
+```
+
+```json
+{
+  "access_token": "your_token_here",
+  "token_type": "bearer"
+}
+```
+
+---
+
+## ▶️ How to Run  
 
 ```bash
-cd api_fortress
+# Clone repository
+git clone https://github.com/your-username/sentinel-api.git
+
+# Navigate
+cd sentinel-api
+
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate    # Windows: venv\Scripts\activate
-pip install -r requirements.txt  # if present
+source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run server
+uvicorn app.main:app --reload --port 8001
 ```
 
-If you don't have a `requirements.txt` yet, install the core deps:
+---
 
-```bash
-pip install fastapi uvicorn sqlalchemy psycopg2-binary alembic passlib python-jose[cryptography] pydantic
-```
-
-## Database & Alembic
-
-Alembic is configured under `alembic/` with `alembic.ini` at the project root.
-It uses the same `DATABASE_URL` as the app and auto-loads models from `app.database.Base`.
-
-### Initialize / create migrations
-
-Create a new migration after changing models:
-
-```bash
-alembic revision -m "describe change"
-```
-
-Apply all migrations:
-
-```bash
-alembic upgrade head
-```
-
-Downgrade one step:
-
-```bash
-alembic downgrade -1
-```
-
-> Note: For now, the app also calls `Base.metadata.create_all(bind=engine)` on startup
-> to make initial development easy. In a production setup you would typically rely
-> on Alembic migrations only and remove that auto-create call.
-
-## Project Structure
-
-High-level layout of the project:
+## 📂 Project Structure  
 
 ```text
 api_fortress/
 │
 ├── app/
-│   ├── main.py           # FastAPI application entrypoint
-│   ├── database.py       # DB engine & session setup
-│   ├── models/           # SQLAlchemy models (User, APIKey, RequestLog, etc.)
-│   ├── schemas/          # Pydantic schemas for request/response models
-│   ├── routers/          # Route modules (auth, api_keys, security, analytics)
-│   ├── services/         # Business logic (auth, security engine, rate limiter)
-│   └── middleware/       # Auth and rate limiting middleware
+│   ├── main.py
+│   ├── database.py
+│   ├── models/
+│   ├── schemas/
+│   ├── routers/
+│   ├── services/
+│   └── middleware/
 │
-├── alembic/              # Alembic migration environment
-├── alembic.ini           # Alembic configuration
+├── alembic/
+├── alembic.ini
 └── README.md
 ```
 
-## Running the API
+---
 
-```bash
-uvicorn app.main:app --reload --port 8001
-```
+## 🔥 Unique Value Proposition  
 
-- Swagger UI: `http://127.0.0.1:8001/docs`
-- OpenAPI JSON: `http://127.0.0.1:8001/openapi.json`
+👉 This is not just an API backend.  
 
-## Basic usage flow
+It is a **Security & Monitoring System** that:  
 
-1. **Register** via `POST /auth/register`.
-2. **Login** via `POST /auth/login` and copy the `access_token`.
-3. **Create API key** via `POST /api-keys/` using the JWT.
-4. For protected routes, send:
-   - `Authorization: Bearer <access_token>`
-   - `X-API-Key: <api_key>`
+- Protects APIs from abuse  
+- Tracks and analyzes traffic  
+- Detects suspicious behavior  
+- Demonstrates real-world backend security concepts  
 
-## License
+---
 
-MIT License
+## 🚀 Future Improvements  
+
+- Advanced anomaly detection using machine learning  
+- Real-time monitoring dashboard  
+- API usage visualization  
+- Distributed rate limiting (Redis)  
+- Docker & cloud deployment  
+
+---
+
+## 🤝 Contribution  
+
+1. Fork the repository  
+2. Create a new branch  
+3. Commit changes  
+4. Submit a pull request  
+
+---
+
+## 📜 License  
+
+MIT License  
+
+---
+
+## 🧠 Final Thought  
+
+> “Secure your APIs before scaling them.”  
+
+---
+
+## ⭐ Support  
+
+If you like this project, give it a star ⭐ and support the journey 🚀  
