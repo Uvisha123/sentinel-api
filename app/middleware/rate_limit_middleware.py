@@ -14,7 +14,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if (
             request.url.path in {"/docs", "/redoc", "/openapi.json"}
             or request.url.path.startswith("/auth")
+
             or request.url.path.startswith("/ml")
+
             or (request.url.path.startswith("/api-keys") and request.method == "POST")
         ):
             return await call_next(request)

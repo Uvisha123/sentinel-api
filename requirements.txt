@@ -13,6 +13,7 @@ passlib[bcrypt]
 python-multipart
 
 pytest
+<<<<<<< HEAD
 httpx
 
 numpy
@@ -21,3 +22,6 @@ scikit-learn
 joblib
 matplotlib
 seaborn
+=======
+httpx
+>>>>>>> 36b22f616c006a8fae6fd7833e030d6d32b07ede
