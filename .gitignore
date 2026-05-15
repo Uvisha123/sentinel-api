@@ -1,0 +1,49 @@
+# ── Python ─────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual Environments ────────────────────────────────────────────────────────
+venv/
+env/
+.venv/
+ENV/
+
+# ── Environment / Secrets ───────────────────────────────────────────────────────
+.env
+
+
+# ── Distribution / Build ────────────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+
+# ── Testing ─────────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.xml
+
+# ── ML Artifacts (trained model binaries) ───────────────────────────────────────
+# Uncomment below if you do NOT want to commit trained models:
+# ml/models/*.pkl
+
+# ── IDE / Editor ────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Alembic ──────────────────────────────────────────────────────────────────────
+# Keep migrations but ignore any local override config
+alembic/versions/__pycache__/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────────
+*.log
+logs/
