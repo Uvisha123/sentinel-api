@@ -1,50 +1,69 @@
-# 🛡️ SentinelAPI – Secure API Monitoring & Intelligence Platform
+# 📚 Semantic Book Recommender – AI-Powered Book Discovery Engine
+
+
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+
+
+
+
+![Gradio](https://img.shields.io/badge/Gradio-Frontend-orange)
+
+
+
+
 ![ML](https://img.shields.io/badge/Machine%20Learning-Enabled-purple)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue)
+
+
+
+
+![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-blue)
+
+
+
+
 ![Status](https://img.shields.io/badge/Status-Active-success)
+
+
+
+
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+
+
 
 ---
 
 ## 🧠 Overview
 
-**SentinelAPI** is a production-ready backend system designed to **secure, monitor, and intelligently analyze API traffic**.
+**Semantic Book Recommender** is an intelligent, interactive recommendation engine that goes beyond simple keyword matching. Instead of searching titles or tags, it understands the **meaning** behind your query and the **emotional tone** you're looking for — then finds books that actually fit.
 
-It combines JWT authentication, API key management, rate limiting, IP blocking, usage analytics, and a **full Machine Learning pipeline** that detects anomalous behavior, clusters IPs by behavior type, and scores risk in real-time.
-
-> 👉 Goal: Build a **secure, scalable, and ML-powered API protection system** — portfolio-grade, interview-ready.
+> 👉 Goal: Combine semantic vector search, zero-shot classification, and sentiment analysis into a single, easy-to-use recommendation dashboard.
 
 ---
 
 ## 🌍 Problem Statement
 
-Modern APIs face critical challenges:
+Traditional book search relies on:
 
-- Unauthorized access and credential attacks
-- API abuse, request flooding, and scraping bots
-- No visibility into traffic patterns or suspicious behavior
-- Reactive security instead of proactive intelligence
+- Exact keyword or title matches
+- Manually tagged genres and categories
+- No sense of tone, mood, or emotional fit
 
 ### 💥 Real-World Impact
 
-- Systems become vulnerable to brute-force and DDoS attacks
-- Increased server load and downtime
-- No insights into API usage patterns
-- Security risks go undetected until it's too late
+- Readers struggle to describe *what they want* in searchable terms
+- Great matches get missed because the wording doesn't line up
+- No way to filter by how a book *feels* (suspenseful, heartwarming, dark, etc.)
 
 ---
 
 ## 🎯 Objectives
 
-- Secure API access using JWT tokens and API keys
-- Monitor all API traffic with request logging
-- Detect and auto-block suspicious IPs
-- Prevent abuse using per-key rate limiting
-- Provide analytics for usage insights
-- **Score IP risk using trained ML models in real-time**
+- Search books by the **meaning** of a free-text description, not just keywords
+- Classify books into clean, simplified categories
+- Score each book's emotional tone across 7 dimensions
+- Let users filter and browse recommendations by category and mood
+- Present everything through a clean, interactive web dashboard
 
 ---
 
@@ -52,374 +71,28 @@ Modern APIs face critical challenges:
 
 ```text
          ┌──────────────────────────────────┐
-         │           CLIENT LAYER           │
-         │    Web App | Mobile | Services   │
+         │             USER QUERY           │
+         │   "A story about forgiveness"    │
          └────────────────┬─────────────────┘
                           │
          ┌────────────────▼─────────────────┐
-         │       AUTHENTICATION LAYER       │
-         │   JWT Bearer Token Verification  │
+         │        EMBEDDING LAYER           │
+         │   HuggingFace all-MiniLM-L6-v2   │
          └────────────────┬─────────────────┘
                           │
          ┌────────────────▼─────────────────┐
-         │         SECURITY ENGINE          │
-         │  API Key Validation | Rate Limit │
-         │  IP Blocking | Anomaly Detection │
+         │        VECTOR SEARCH LAYER       │
+         │   ChromaDB similarity search     │
+         │   (via LangChain)                │
          └────────────────┬─────────────────┘
                           │
          ┌────────────────▼─────────────────┐
-         │        ML INTELLIGENCE LAYER     │
-         │  Isolation Forest (Anomaly)      │
-         │  K-Means (Behavior Clustering)   │
-         │  Logistic Regression (Risk Score)│
+         │      CLASSIFICATION LAYER        │
+         │  Category grouping (zero-shot)   │
+         │  Emotion scoring (DistilRoBERTa) │
          └────────────────┬─────────────────┘
                           │
          ┌────────────────▼─────────────────┐
-         │          ANALYTICS LAYER         │
-         │    Logs | Metrics | Insights     │
-         └────────────────┬─────────────────┘
-                          │
-         ┌────────────────▼─────────────────┐
-         │           DATA LAYER             │
-         │  Users | API Keys | Request Logs │
-         │  Rate Limits | Blocked IPs       │
+         │         GRADIO DASHBOARD         │
+         │   Search, filter, browse results │
          └──────────────────────────────────┘
-```
-
----
-
-## 🔐 Core Features
-
-### Auth & Access Control
-- JWT-based user authentication (register + login)
-- API key generation with scopes and usage limits
-- Token expiry and secure password hashing (pbkdf2_sha256)
-
-### Security Engine
-- Per-key rate limiting with configurable time windows
-- Automatic IP blocking on request flood detection (>100 req/min)
-- Manual IP block/unblock endpoints
-
-### Analytics
-- Request count grouped by API key
-- Top 5 most-hit endpoints
-- Abuse detection — keys that exceeded their usage limit
-
-### 🤖 Machine Learning Pipeline
-- **Isolation Forest** — detects anomalous IPs (outlier detection)
-- **K-Means Clustering** — classifies IPs into behavioral profiles
-- **Logistic Regression** — scores risk probability (0.0 → 1.0)
-- Ensemble output: anomaly flag + cluster label + risk tier + recommendation
-
----
-
-## 🤖 ML Intelligence Layer
-
-### Training Pipeline (offline)
-
-```
-data_generator.py   →   100k rows of synthetic API traffic
-        ↓
-features.py         →   Aggregate per-IP behavioral features
-        ↓
-train.py            →   Train 3 models → save as .pkl files
-        ↓
-evaluate.py         →   Metrics, confusion matrix, feature importance plots
-```
-
-### Inference (live, via API)
-
-Send 6 IP behavioral features → get back full risk assessment:
-
-| Feature | Description |
-|---|---|
-| `requests_per_min` | Average request rate |
-| `endpoint_variety` | Number of unique endpoints accessed |
-| `error_rate` | Fraction of 4xx/5xx responses (0.0–1.0) |
-| `avg_time_between_reqs` | Seconds between requests |
-| `single_endpoint_ratio` | Fraction of traffic to single endpoint |
-| `user_agent_variety` | Number of distinct user agents |
-
-### Risk Tiers
-
-| Tier | Probability | Action |
-|---|---|---|
-| `SAFE` | < 0.3 | Allow — normal usage |
-| `MONITOR` | 0.3 – 0.7 | Rate-limit + watch |
-| `BLOCK` | ≥ 0.7 | Block immediately |
-
-### Behavioral Clusters
-
-| Cluster | Profile | Pattern |
-|---|---|---|
-| `normal` | Legitimate User | Low rate, varied endpoints, few errors |
-| `bruteforce` | Brute-Force Attacker | Hammering `/auth/login` with 401s |
-| `scraper` | Scraper Bot | Many endpoints, medium-high rate |
-| `credential_stuffing` | Credential Stuffer | Auth bursts, rotating user agents |
-
----
-
-## ⚙️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Backend** | Python 3.10+, FastAPI, Uvicorn |
-| **Database** | PostgreSQL, SQLAlchemy ORM, Alembic |
-| **Auth** | JWT (python-jose), Passlib (pbkdf2_sha256) |
-| **Validation** | Pydantic v2, pydantic-settings |
-| **ML** | scikit-learn, NumPy, Pandas, joblib |
-| **Visualization** | Matplotlib, Seaborn |
-| **Testing** | Pytest, HTTPX |
-| **Config** | python-dotenv, `.env` file |
-
----
-
-## 📡 API Endpoints
-
-### Auth
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/auth/register` | Register a new user |
-| `POST` | `/auth/login` | Login → get JWT token |
-
-### API Keys
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api-keys/` | Create a new API key |
-| `GET` | `/api-keys/` | List all API keys |
-| `DELETE` | `/api-keys/{id}` | Delete an API key |
-
-### Security
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/security/block-ip` | Block an IP address |
-| `GET` | `/security/blocked-ips` | List all blocked IPs |
-| `DELETE` | `/security/unblock-ip/{id}` | Unblock an IP |
-
-### Analytics
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/analytics/requests` | Request counts by API key |
-| `GET` | `/analytics/top-endpoints` | Top 5 most-hit endpoints |
-| `GET` | `/analytics/abuse-detection` | Keys exceeding usage limit |
-
-### Machine Learning
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/ml/status` | Are models loaded? Feature list? |
-| `POST` | `/ml/reload` | Reload .pkl models from disk |
-| `POST` | `/ml/score` | Full risk score for an IP |
-| `POST` | `/ml/cluster` | Behavioral profile for an IP |
-
----
-
-## 🧪 Example Usage
-
-### 1. Register a User
-```http
-POST /auth/register
-Content-Type: application/json
-
-{
-  "username": "alice",
-  "email": "alice@example.com",
-  "password": "securepassword"
-}
-```
-
-### 2. Login → Get JWT
-```http
-POST /auth/login
-Content-Type: application/x-www-form-urlencoded
-
-username=alice&password=securepassword
-```
-```json
-{ "access_token": "eyJ...", "token_type": "bearer" }
-```
-
-### 3. Score an IP with ML
-```http
-POST /ml/score
-Authorization: Bearer <token>
-X-API-Key: <your-api-key>
-Content-Type: application/json
-
-{
-  "requests_per_min": 3.5,
-  "endpoint_variety": 2,
-  "error_rate": 0.85,
-  "avg_time_between_reqs": 15.0,
-  "single_endpoint_ratio": 0.90,
-  "user_agent_variety": 1
-}
-```
-```json
-{
-  "anomaly": true,
-  "anomaly_score": -0.42,
-  "cluster_id": 1,
-  "cluster_label": "bruteforce",
-  "risk_probability": 0.91,
-  "risk_tier": "BLOCK",
-  "recommendation": "HIGH RISK — Recommend immediate blocking."
-}
-```
-
----
-
-## ▶️ How to Run
-
-### 1. Clone & Setup
-```bash
-git clone https://github.com/your-username/sentinel-api.git
-cd sentinel-api
-
-python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Mac/Linux
-
-pip install -r requirements.txt
-```
-
-### 2. Configure Environment
-```bash
-cp .env.example .env
-# Edit .env with your PostgreSQL credentials and secret key
-```
-
-### 3. Train the ML Models (first time only)
-```bash
-python -m ml.data_generator   # generate synthetic data
-python -m ml.train             # train and save models
-python -m ml.evaluate          # view metrics and plots
-```
-
-### 4. Start the Server
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-### 5. Open Swagger UI
-```
-http://127.0.0.1:8000/docs
-```
-
----
-
-## 📂 Project Structure
-
-```text
-sentinel-api-main/
-│
-├── .env                        ← local secrets (gitignored)
-├── .env.example                ← template for other devs
-├── .gitignore
-├── requirements.txt
-│
-├── app/
-│   ├── main.py                 ← FastAPI app, middleware, routers
-│   ├── config.py               ← centralized settings (reads .env)
-│   ├── database.py             ← SQLAlchemy engine + session
-│   │
-│   ├── models/                 ← DB table definitions
-│   │   ├── user.py
-│   │   ├── api_key.py
-│   │   ├── request_log.py
-│   │   ├── rate_limit.py
-│   │   └── blocked_ip.py
-│   │
-│   ├── schemas/                ← Pydantic request/response models
-│   │   ├── user_schema.py
-│   │   ├── api_key_schema.py
-│   │   └── ...
-│   │
-│   ├── routers/                ← API endpoints
-│   │   ├── auth_router.py
-│   │   ├── api_keys_router.py
-│   │   ├── security_router.py
-│   │   ├── analytics_router.py
-│   │   └── ml.py
-│   │
-│   ├── services/               ← business logic
-│   │   ├── auth_service.py     ← JWT + password hashing
-│   │   ├── security_engine.py  ← auto-block + anomaly detection
-│   │   ├── rate_limiter.py     ← per-key rate limiting
-│   │   ├── analytics_service.py
-│   │   ├── api_key_service.py
-│   │   ├── email_service.py
-│   │   └── ml_service.py       ← bridge to ML models
-│   │
-│   ├── middleware/
-│   │   ├── auth_middleware.py        ← JWT validation
-│   │   └── rate_limit_middleware.py  ← API key + rate limit
-│   │
-│   └── tests/
-│       ├── test_auth.py
-│       ├── test_api_keys.py
-│       ├── test_rate_limit.py
-│       └── test_security_engine.py
-│
-├── ml/
-│   ├── data_generator.py       ← synthetic training data
-│   ├── features.py             ← feature engineering
-│   ├── train.py                ← model training
-│   ├── evaluate.py             ← metrics + plots
-│   ├── predict.py              ← live inference engine
-│   │
-│   ├── data/
-│   │   ├── synthetic_requests.csv
-│   │   └── ip_features.csv
-│   │
-│   ├── models/                 ← trained model files
-│   │   ├── isolation_forest.pkl
-│   │   ├── kmeans.pkl
-│   │   ├── logistic_regression.pkl
-│   │   ├── scaler.pkl
-│   │   └── cluster_map.pkl
-│   │
-│   └── notebooks/plots/        ← evaluation charts
-│       ├── confusion_matrix.png
-│       ├── feature_importance.png
-│       ├── risk_distribution.png
-│       └── cluster_visualization.png
-│
-└── alembic/                    ← DB migrations
-```
-
----
-
-## 🔥 What Makes This Project Stand Out
-
-This is **not** just a CRUD API. It is a full **security intelligence platform**:
-
-- ✅ Real ML models trained on behavioral data — not just rule-based detection
-- ✅ Ensemble of 3 complementary models (anomaly + clustering + risk scoring)
-- ✅ Clean layered architecture (middleware → router → service → model)
-- ✅ Production-ready patterns: env config, ORM, Pydantic schemas, JWT auth
-- ✅ End-to-end pipeline: data generation → training → evaluation → live inference
-
----
-
-## 🤝 Contribution
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/my-feature`)
-3. Commit your changes
-4. Submit a pull request
-
----
-
-## 📜 License
-
-MIT License
-
----
-
-## 🧠 Final Thought
-
-> *"Don't wait for an attack to understand your traffic. Let the models tell you first."*
-
----
-
-⭐ If you find this project useful, give it a star and support the journey 🚀
